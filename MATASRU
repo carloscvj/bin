@@ -1,0 +1,48 @@
+###############################################################################
+#                            Elimino los procesos SRU                         #
+###############################################################################
+pamatar=`ps xa|grep SRU|awk '{print $1}'`
+for i in $pamatar
+do
+kill -9 $i 2>/dev/null
+done
+###############################################################################
+#                        Elimino SRU de la memoria compartida                 #
+###############################################################################
+ipcs -m|while read linea
+do
+  mide=`expr length "$linea"`
+  if [ $mide != 0 ]
+  then
+shmid=`echo $linea|awk '{print $2}'`
+	propietario=`echo $linea|awk '{print $3}'`
+	perms=`echo $linea|awk '{print $4}'`
+	bytes=`echo $linea|awk '{print $5}'`
+	if [ $propietario = "root" -a $perms = "1" -a $bytes = "51016" ]
+	then
+		ipcrm -m "$shmid"
+	fi
+  fi
+done
+###############################################################################
+#                     Elimino los semaforos generados por los SRU             #
+###############################################################################
+ipcs -s|while read linea
+do
+  mide=`expr length "$linea"`
+  if [ $mide != 0 ]
+  then
+	semid=`echo $linea|awk '{print $2}'`
+	propietario=`echo $linea|awk '{print $3}'`
+	perms=`echo $linea|awk '{print $4}'`
+	nsems=`echo $linea|awk '{print $5}'`
+	mide1=`expr length "$nsems"`
+	if [ $mide1 != 0 ]
+	then
+	  if [ $propietario = "root" -a $perms = "777" -a $nsems = "8" ]
+	  then
+		  ipcrm -s "$semid"
+	  fi
+	fi
+  fi
+done

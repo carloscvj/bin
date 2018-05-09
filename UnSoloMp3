@@ -1,0 +1,43 @@
+#!/bin/sh
+
+
+#-----------------------------------------------------------------
+#-----------------------------------------------------------------
+
+
+carpeta="${1}"
+ 
+if [ -d "${carpeta}" ]
+then
+    if [ -d "${2}" ]
+    then
+        for cm in "${carpeta}"/*
+        do
+            if [ -d "${cm}" ]
+            then
+                   echo "UnSoloMp3 ${cm}"
+                   UnSoloMp3 "${cm}" "${2}"
+            fi       
+        done
+        echo "haciendo ${carpeta}"
+        autor=`dirname "${carpeta}"`
+        autor=`basename "${autor}"`
+        destino="${2}"/"${autor}"/`basename "${carpeta}"`
+        mkdir -p "${2}"/"${autor}"        
+        rm -rf ${destino}.mp3
+
+        for i in "${carpeta}"/*.mp3
+        do
+            if [ -f "${i}" ]
+            then
+                echo "cat $i>>${destino}.mp3"
+                cat "${i}">>"${destino}".mp3
+            fi
+        done
+    else
+        echo "${2} - Necesito una carpeta de destino"
+    fi
+else
+    echo "${carpeta} - Necesito una carpeta con todos los .mp3 dentro"
+fi
+

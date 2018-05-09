@@ -1,0 +1,15 @@
+#!/bin/sh
+
+carpeta=/usr/java/latest
+if [ "${1}" ]
+then
+	carpeta=${1}
+fi
+
+for i in ${carpeta}/bin/*
+do
+    echo ${i}
+    p=`basename ${i}`
+    rm -f /usr/bin/${p}
+    ln -s ${i} /usr/bin/${p}
+done

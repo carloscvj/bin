@@ -1,0 +1,38 @@
+#!/bin/sh
+
+
+#-----------------------------------------------------------------
+#-----------------------------------------------------------------
+
+
+carpeta="${1}"
+ 
+if [ -d "${carpeta}" ]
+then
+    for cm in "${carpeta}"/*
+    do
+        if [ -d "${cm}" ]
+        then
+                echo "FotosToBackgrounds ${cm}"
+                FotosToBackgrounds "${cm}"
+        fi       
+    done
+    echo "haciendo ${carpeta}"
+    for i in "${carpeta}"/*.jpg
+    do
+        if [ -f "${i}" ]
+        then
+            p=`basename "${i}"`
+            if [ "${p}" == "*.jpg" ]
+            then
+                continue;
+            fi
+            rm -f ${HOME}/backgrounds/${p}
+            echo "ln -s ${i} ${HOME}/backgrounds/${p}"
+            ln -s ${i} ${HOME}/backgrounds/${p}
+        fi
+    done
+else
+    echo "${carpeta} - Necesito una carpeta con todos los .jpg dentro"
+fi
+
